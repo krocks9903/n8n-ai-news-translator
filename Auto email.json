@@ -1,0 +1,275 @@
+{
+  "name": "Auto email",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0febcd86-c0e0-4804-be83-9716ba9eb983",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://www.wired.com/feed/tag/ai/latest/rss",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "d3c7f80e-a969-42fc-bc46-14e1f393aa96",
+      "name": "RSS Read"
+    },
+    {
+      "parameters": {
+        "maxItems": 6
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "8427d999-ceba-4eab-b915-a96ce996b4f1",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.title }}",
+        "translateTo": "hi"
+      },
+      "type": "n8n-nodes-base.googleTranslate",
+      "typeVersion": 2,
+      "position": [
+        592,
+        -128
+      ],
+      "id": "f7617dfd-a4b9-4b1e-a650-badf83d37311",
+      "name": "Translate a language",
+      "credentials": {
+        "googleTranslateOAuth2Api": {
+          "id": "UVjnN4eEaDSB1SM9",
+          "name": "Google Translate account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.content }}",
+        "translateTo": "hi"
+      },
+      "type": "n8n-nodes-base.googleTranslate",
+      "typeVersion": 2,
+      "position": [
+        592,
+        80
+      ],
+      "id": "7890477c-f5db-4482-b434-9e6af9aa3bcd",
+      "name": "Translate a language1",
+      "credentials": {
+        "googleTranslateOAuth2Api": {
+          "id": "KHFrHFGUqvTPOLk6",
+          "name": "Google Translate account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        832,
+        0
+      ],
+      "id": "4372e09e-440b-4b7b-ba65-0b650a15b5b6",
+      "name": "Merge",
+      "alwaysOutputData": false,
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7e12d5dc-80d5-4520-b25e-dadb8b4a3ad3",
+              "name": "translatedText",
+              "value": "={{ $('Translate a language').item.json.translatedText }}",
+              "type": "string"
+            },
+            {
+              "id": "38f6b6c4-de37-4302-9b35-9ebc6c17960b",
+              "name": "translatedContent",
+              "value": "={{ $('Translate a language1').item.json.translatedText }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1040,
+        0
+      ],
+      "id": "abbdb415-dbaf-4e7d-b42d-65dc4aaafc4c",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1248,
+        0
+      ],
+      "id": "bb4f5404-c45a-406b-b6ef-aa54f6a4ac80",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "sendTo": "ksshah1283@eagle.fgcu.edu",
+        "subject": "Daily News Summary",
+        "message": "={{    ($json.data ?? []).map(d =>     `<div style=\"margin-bottom:16px\">        <h3 style=\"margin:0 0 6px\">${d.translatedTitle ?? \"\"}</h3>        <div>${d.translatedContent ?? \"\"}</div>        <hr/>      </div>`   ).join(\"\") }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1456,
+        0
+      ],
+      "id": "6d5f30f2-f295-4021-ab53-c60fed987efe",
+      "name": "Send a message",
+      "webhookId": "99268c4a-c9ad-42b6-88e3-23af0175fd43",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "LLvdIPqj70qK1NqQ",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "RSS Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Translate a language",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Translate a language1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Translate a language": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Translate a language1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": -1
+  },
+  "versionId": "4f1fd840-1974-44e6-af8a-efaee0c51069",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fafa3f206ec1495dee66ea42c6d47b9440d13a229b7097434b37c719b7719eb0"
+  },
+  "id": "SGdG1allOMnUuhJP",
+  "tags": []
+}
