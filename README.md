@@ -1,6 +1,8 @@
 # n8n AI News Translator
 
-An automated workflow built with n8n that fetches the latest AI news from Wired's RSS feed, translates articles to Hindi using Google Translate, and delivers formatted daily email summaries.
+An automated workflow built with n8n that fetches the latest news from an RSS feed, translates articles to Hindi using Google Translate, and delivers formatted daily email summaries.
+
+> **Current feed:** the exported workflow (`Auto email.json`) reads NASA's news release feed (`https://www.nasa.gov/news-release/feed/`). It was first built against Wired's AI feed (`https://www.wired.com/feed/tag/ai/latest/rss`). To switch, change the URL in the **RSS Read** node. The email template still says "AI Intelligence Brief" in the header and "Wired AI Feed" in the footer, whichever feed is set.
 
 ## Overview
 
@@ -8,7 +10,7 @@ This project demonstrates the power of n8n's visual workflow automation by creat
 
 ## Features
 
-- **RSS Feed Integration**: Automatically pulls latest AI articles from Wired
+- **RSS Feed Integration**: Pulls the latest items from the feed set in the RSS Read node
 - **Content Limiting**: Processes top 6 most recent articles to keep emails manageable
 - **Dual Translation**: Translates both headlines and article content to Hindi
 - **Email Automation**: Sends beautifully formatted HTML emails via Gmail
@@ -17,7 +19,7 @@ This project demonstrates the power of n8n's visual workflow automation by creat
 ## Workflow Steps
 
 1. **Manual Trigger**: Starts the workflow execution
-2. **RSS Reader**: Fetches latest AI news from Wired's RSS feed
+2. **RSS Read**: Fetches the latest items from the configured feed (NASA news releases in the current export)
 3. **Content Limiter**: Restricts to 6 most recent articles
 4. **Parallel Translation**: Simultaneously translates titles and content
 5. **Data Merging**: Combines translated content with original data
@@ -65,7 +67,7 @@ This project demonstrates the power of n8n's visual workflow automation by creat
 - **API**: Google Translate (requires valid credentials)
 
 ### Content Filtering
-- **Source**: Wired AI RSS feed
+- **Source**: NASA news release feed in the current export (set in the RSS Read node)
 - **Article Limit**: 6 articles (adjustable in Limit node)
 - **Content**: Full article text and headlines
 
@@ -73,9 +75,11 @@ This project demonstrates the power of n8n's visual workflow automation by creat
 
 ```
 n8n-ai-news-translator/
-├── Auto email.json          # n8n workflow export
-├── README.md               # This file
-└── screenshots/            # Workflow screenshots (optional)
+├── Auto email.json                    # n8n workflow export
+├── README.md                          # This file
+├── Screenshot 2025-09-14 170615.png   # Workflow canvas in n8n
+├── Screenshot 2025-09-14 170629.png   # Sample output text in Hindi
+└── Screenshot 2025-09-14 170640.png   # The same text in English
 ```
 
 ## Customization Ideas
@@ -117,5 +121,4 @@ This project is open source and available under the MIT License.
 
 - n8n team for building an amazing automation platform
 - Wired for providing quality AI news content
-- Google for translation services# n8n-ai-news-translator
-Automated workflow using n8n to fetch AI news from RSS feeds, translate content to Hindi, and deliver daily email summaries
+- Google for translation services
